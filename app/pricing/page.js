@@ -3,13 +3,72 @@
 import Link from "next/link";
 import Layout from "../components/Layout";
 import FadeInSection from "../components/FadeInSection";
-import { useState } from "react";
+import PromotionBanner from "../components/PromotionBanner";
+import { useState, useEffect, useRef } from "react";
 
 export default function Pricing() {
   const [billingType, setBillingType] = useState("monthly"); // "monthly" veya "yearly"
+  const [activeTab, setActiveTab] = useState(1); // Aktif plan sekmesi (mobil görünüm için)
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+  const faqRefs = useRef([]);
+  const featureTableRef = useRef(null);
+  const pricingCardsRef = useRef(null);
 
+  useEffect(() => {
+    setIsMounted(true);
+    
+    const handleScroll = () => {
+      const position = window.scrollY;
+      setScrollPosition(position);
+      
+      // Scroll reveal animasyonları için
+      const scrollItems = document.querySelectorAll('.scroll-reveal');
+      scrollItems.forEach(el => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight * 0.85;
+        
+        if (isInView) {
+          el.classList.add('active');
+        }
+      });
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    // Başlangıç kontrolü
+    handleScroll();
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fiyat tipi değiştirme işlevi
   const toggleBillingType = () => {
+    // Toggle animasyonu için
+    const toggleElement = document.querySelector('.billing-toggle-thumb');
+    if (toggleElement) {
+      toggleElement.classList.add('animate-toggle');
+      setTimeout(() => {
+        toggleElement.classList.remove('animate-toggle');
+      }, 500);
+    }
+    
     setBillingType(billingType === "monthly" ? "yearly" : "monthly");
+  };
+
+  // Fiyat değişiminde animasyon
+  const getAnimatedPrice = (monthly, yearly) => {
+    const price = billingType === "monthly" ? monthly : yearly;
+    return (
+      <span className="price-change-animation">{price}</span>
+    );
+  };
+
+  // FAQ toggle fonksiyonu
+  const toggleFaq = (index) => {
+    if (faqRefs.current[index]) {
+      faqRefs.current[index].classList.toggle('faq-open');
+    }
   };
 
   // Fiyatlandırma paketleri
@@ -26,7 +85,8 @@ export default function Pricing() {
         "E-posta desteği"
       ],
       link: "https://github.com/Melihcnz/RestoranWEB",
-      recommended: false
+      recommended: false,
+      color: "from-blue-500 to-cyan-400"
     },
     {
       name: "Profesyonel",
@@ -42,7 +102,8 @@ export default function Pricing() {
         "7/24 öncelikli destek"
       ],
       link: "https://github.com/Melihcnz/RestoranWEB",
-      recommended: true
+      recommended: true,
+      color: "from-indigo-600 to-purple-500"
     },
     {
       name: "Kurumsal",
@@ -59,19 +120,78 @@ export default function Pricing() {
         "SLA garantisi"
       ],
       link: "https://github.com/Melihcnz/RestoranWEB",
-      recommended: false
+      recommended: false,
+      color: "from-purple-600 to-pink-500"
     }
+  ];
+
+  // SSS sorular
+  const faqItems = [
+    {
+      question: "Hangi planı seçmeliyim?",
+      answer: "İşletmenizin büyüklüğüne ve ihtiyaçlarınıza bağlıdır. Küçük bir işletme için Başlangıç planı yeterli olabilir, orta ölçekli işletmeler için Profesyonel plan önerilir, birden fazla şubesi olan büyük işletmeler için ise Kurumsal plan en uygunudur."
+    },
+    {
+      question: "Fiyatlara KDV dahil mi?",
+      answer: "Belirtilen tüm fiyatlara KDV dahildir. Faturanızda KDV detayı ayrıca gösterilecektir."
+    },
+    {
+      question: "Paketimi daha sonra yükseltebilir miyim?",
+      answer: "Evet, ihtiyaçlarınız değiştikçe paketinizi istediğiniz zaman yükseltebilirsiniz. Yükseltme sırasında kalan sürenizin bedeli yeni paketin fiyatından düşülecektir."
+    },
+    {
+      question: "Deneme sürümü var mı?",
+      answer: "Evet, tüm paketlerimiz için 14 günlük ücretsiz deneme sürümü sunuyoruz. Bu süre içinde tüm özellikleri test edebilir ve işletmenize uygunluğunu değerlendirebilirsiniz."
+    },
+    {
+      question: "Özel ihtiyaçlarım için özelleştirme yapabilir misiniz?",
+      answer: "Evet, özellikle Kurumsal paketimizde özel ihtiyaçlarınıza yönelik özelleştirmeler yapabiliyoruz. Detaylı bilgi için satış ekibimizle iletişime geçebilirsiniz."
+    }
+  ];
+
+  // Karşılaştırma özellikleri
+  const comparisonFeatures = [
+    { name: "Masa ve Sipariş Yönetimi", starter: true, pro: true, enterprise: true },
+    { name: "Menü Yönetimi", starter: true, pro: true, enterprise: true },
+    { name: "Mobil Uyumluluk", starter: true, pro: true, enterprise: true },
+    { name: "Çoklu Şube Desteği", starter: false, pro: true, enterprise: true },
+    { name: "Rezervasyon Sistemi", starter: false, pro: true, enterprise: true },
+    { name: "Müşteri Veri Tabanı", starter: true, pro: true, enterprise: true },
+    { name: "Stok Yönetimi", starter: false, pro: true, enterprise: true },
+    { name: "Analitik Raporlama", starter: false, pro: true, enterprise: true },
+    { name: "Mobil Uygulama", starter: false, pro: false, enterprise: true },
+    { name: "API Entegrasyonu", starter: false, pro: false, enterprise: true },
+    { name: "7/24 Destek", starter: false, pro: true, enterprise: true },
+    { name: "SLA Garantisi", starter: false, pro: false, enterprise: true },
   ];
 
   return (
     <Layout>
       <main className="page-transition">
-        <section className="pt-32 pb-16 min-h-screen">
-          <div className="container mx-auto px-6">
+        <section className="pt-32 pb-16 min-h-screen relative overflow-hidden">
+          {/* Arka plan efektleri */}
+          <div className="absolute inset-0 -z-10 overflow-hidden">
+            <div 
+              className="absolute w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl" 
+              style={{ 
+                top: isMounted ? -100 - scrollPosition * 0.05 : -100, 
+                left: isMounted ? -200 - scrollPosition * 0.02 : -200
+              }}
+            ></div>
+            <div 
+              className="absolute w-96 h-96 rounded-full bg-purple-600/10 blur-3xl" 
+              style={{ 
+                bottom: isMounted ? 100 - scrollPosition * 0.03 : 100, 
+                right: isMounted ? -150 - scrollPosition * 0.01 : -150
+              }}
+            ></div>
+          </div>
+          
+          <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-5xl mx-auto text-center mb-16">
               <FadeInSection delay={200}>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6">Restoran Yönetim Sistemi Fiyatlandırma</h1>
-                <p className="text-lg text-muted max-w-3xl mx-auto">
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600">Restoran Yönetim Sistemi Fiyatlandırma</h1>
+                <p className="text-lg text-muted max-w-3xl mx-auto scroll-reveal">
                   İşletmenizin büyüklüğüne ve ihtiyaçlarınıza göre özelleştirilmiş çözümler. 
                   İhtiyaçlarınıza en uygun planı seçin.
                 </p>
@@ -80,49 +200,91 @@ export default function Pricing() {
               {/* Fiyatlandırma Tipi Seçici */}
               <FadeInSection delay={300}>
                 <div className="flex items-center justify-center mt-10 mb-12">
-                  <span className={`text-sm ${billingType === "monthly" ? "text-foreground" : "text-muted"}`}>Aylık</span>
+                  <span className={`text-sm font-medium transition-colors duration-300 ${billingType === "monthly" ? "text-foreground" : "text-muted"}`}>Aylık</span>
                   <button 
-                    className="mx-4 relative w-14 h-7 rounded-full bg-accent flex items-center p-1 cursor-pointer transition-colors duration-300"
+                    className="mx-4 relative w-16 h-8 rounded-full bg-accent/50 hover:bg-accent/70 flex items-center px-1 cursor-pointer transition-colors duration-300"
                     onClick={toggleBillingType}
                     aria-label="Faturalama tipini değiştir"
                   >
                     <span 
-                      className={`w-5 h-5 rounded-full bg-foreground transform transition-transform duration-300 ${billingType === "yearly" ? "translate-x-7" : ""}`} 
+                      className={`billing-toggle-thumb w-6 h-6 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow-md transform transition-transform duration-500 ${billingType === "yearly" ? "translate-x-8" : "translate-x-0"}`} 
                     />
                   </button>
-                  <span className={`text-sm ${billingType === "yearly" ? "text-foreground" : "text-muted"}`}>Yıllık <span className="text-emerald-500 font-medium">%20 İndirim</span></span>
+                  <div className="flex flex-col items-start">
+                    <span className={`text-sm font-medium transition-colors duration-300 ${billingType === "yearly" ? "text-foreground" : "text-muted"}`}>Yıllık</span>
+                    <span className="text-emerald-500 text-xs font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full">%20 İndirim</span>
+                  </div>
                 </div>
               </FadeInSection>
               
+              {/* Mobil görünüm sekmeleri (küçük ekranlar için) */}
+              <div className="md:hidden flex justify-center gap-2 mb-8">
+                {pricingPlans.map((plan, index) => (
+                  <button
+                    key={`tab-${index}`}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${activeTab === index ? 'bg-foreground text-background' : 'bg-foreground/10'}`}
+                    onClick={() => setActiveTab(index)}
+                  >
+                    {plan.name}
+                  </button>
+                ))}
+              </div>
+              
               {/* Fiyatlandırma Kartları */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+              <div ref={pricingCardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                 {pricingPlans.map((plan, index) => (
                   <FadeInSection delay={400 + (index * 200)} key={index}>
-                    <div className="price-card relative h-full flex flex-col">
-                      <div className="price-card-header">
+                    <div 
+                      className={`pricing-card-shine relative h-full flex flex-col rounded-2xl overflow-hidden transition-all duration-500 hover:translate-y-[-10px] hover:shadow-xl 
+                                 md:opacity-100 md:block ${activeTab === index ? 'opacity-100' : 'hidden md:opacity-60'} 
+                                 ${plan.recommended ? 'border-2 border-indigo-500 shadow-lg scale-105 md:scale-105 z-10' : 'border border-accent'}`}
+                    >
+                      {/* Gradient overlay ve glowing efekt */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-5 transition-opacity duration-300 hover:opacity-10`}></div>
+                      
+                      {/* Önerilen badge */}
+                      {plan.recommended && (
+                        <div className="absolute top-0 right-0">
+                          <div className="popular-badge bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-1 rounded-bl-lg rounded-tr-lg text-xs font-medium shadow-md">
+                            Önerilen
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="p-6 border-b border-accent">
                         <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                         <p className="text-muted text-sm">{plan.description}</p>
                       </div>
-                      <div className="price-card-body flex-1 flex flex-col">
-                        <div className="mb-8">
-                          <span className="price-tag">{plan.price} ₺</span>
-                          <span className="text-muted">/{billingType === "monthly" ? "ay" : "yıl"}</span>
+                      
+                      <div className="p-6 flex-1 flex flex-col">
+                        <div className="mb-8 flex items-end">
+                          <span className="text-4xl font-bold price-animation">
+                            {plan.price} ₺
+                          </span>
+                          <span className="text-muted ml-2">/{billingType === "monthly" ? "ay" : "yıl"}</span>
                         </div>
-                        <ul className="feature-list space-y-3 mb-auto">
+                        
+                        <ul className="space-y-3 mb-auto">
                           {plan.features.map((feature, i) => (
-                            <li key={i} className="text-sm">
-                              {feature}
+                            <li key={i} className="flex items-start text-sm">
+                              <span className="feature-check inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs mr-3 mt-0.5 flex-shrink-0">✓</span>
+                              <span>{feature}</span>
                             </li>
                           ))}
                         </ul>
+                        
                         <div className="mt-8">
                           <a 
                             href={plan.link} 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="block w-full text-center py-3 rounded-lg font-medium transition-colors duration-300 bg-foreground text-background hover:bg-foreground/90"
+                            className={`pricing-cta group block w-full text-center py-3 px-6 rounded-lg font-medium transition-all duration-300
+                                      ${plan.recommended 
+                                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg' 
+                                        : 'bg-foreground text-background hover:bg-foreground/90'}`}
                           >
                             Demo İncele
+                            <span className="inline-block ml-2 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
                           </a>
                         </div>
                       </div>
@@ -130,144 +292,119 @@ export default function Pricing() {
                   </FadeInSection>
                 ))}
               </div>
+              
+              {/* Özellik Karşılaştırma Tablosu */}
+              <FadeInSection delay={1000}>
+                <div className="mt-32 mb-24 overflow-hidden scroll-reveal" ref={featureTableRef}>
+                  <h2 className="text-3xl font-bold mb-12 text-center">Plan Özelliklerini Karşılaştırın</h2>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="py-4 px-4 border-b border-accent">Özellik</th>
+                          <th className="py-4 px-4 border-b border-accent text-center">Başlangıç</th>
+                          <th className="py-4 px-4 border-b border-accent text-center relative">
+                            <span className="feature-badge absolute top-0 right-4 -mt-2 px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full">Önerilen</span>
+                            Profesyonel
+                          </th>
+                          <th className="py-4 px-4 border-b border-accent text-center">Kurumsal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {comparisonFeatures.map((feature, index) => (
+                          <tr key={index} className="pricing-row hover:bg-foreground/5 transition-all duration-300">
+                            <td className="py-3 px-4 border-b border-accent/50">{feature.name}</td>
+                            <td className="py-3 px-4 border-b border-accent/50 text-center">
+                              {feature.starter ? (
+                                <span className="feature-check inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white mx-auto">✓</span>
+                              ) : (
+                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-accent mx-auto">-</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 border-b border-accent/50 text-center">
+                              {feature.pro ? (
+                                <span className="feature-check inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white mx-auto">✓</span>
+                              ) : (
+                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-accent mx-auto">-</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 border-b border-accent/50 text-center">
+                              {feature.enterprise ? (
+                                <span className="feature-check inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white mx-auto">✓</span>
+                              ) : (
+                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-accent mx-auto">-</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </FadeInSection>
+              
+              {/* Sık Sorulan Sorular */}
+              <FadeInSection delay={1200}>
+                <div className="my-24 max-w-3xl mx-auto">
+                  <h2 className="text-3xl font-bold mb-12 text-center">Sık Sorulan Sorular</h2>
+                  
+                  <div className="space-y-6">
+                    {faqItems.map((item, index) => (
+                      <div 
+                        key={index} 
+                        className="border border-accent rounded-xl overflow-hidden"
+                        ref={el => faqRefs.current[index] = el}
+                      >
+                        <button 
+                          className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-foreground/5 transition-colors duration-300"
+                          onClick={() => toggleFaq(index)}
+                        >
+                          <span className="font-medium">{item.question}</span>
+                          <span className="faq-icon transition-transform duration-300 text-xl">↓</span>
+                        </button>
+                        <div className="faq-content max-h-0 overflow-hidden transition-all duration-500">
+                          <div className="px-6 py-4 bg-foreground/5 text-muted">
+                            {item.answer}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </FadeInSection>
+              
+              {/* CTA Bölümü */}
+              <FadeInSection delay={1400}>
+                <div className="mt-24 mb-12 text-center max-w-3xl mx-auto scroll-reveal plan-switch-appear">
+                  <div className="p-8 rounded-2xl bg-gradient-to-b from-foreground/10 to-transparent border border-accent">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">Restoran Yönetim Sisteminizi Hemen Kullanmaya Başlayın</h2>
+                    <p className="text-muted mb-8">14 günlük ücretsiz deneme ile tüm özellikleri test edin, risk yok!</p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <a 
+                        href="https://github.com/Melihcnz/RestoranWEB" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="pricing-cta bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-300"
+                      >
+                        Ücretsiz Demo Başlatın
+                      </a>
+                      <a 
+                        href="#" 
+                        className="bg-foreground/10 hover:bg-foreground/20 text-foreground px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                      >
+                        Detaylı Bilgi Alın
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </FadeInSection>
             </div>
           </div>
         </section>
-
-        {/* Özellikler Karşılaştırma Tablosu */}
-        <FadeInSection delay={600}>
-          <section className="py-16">
-            <div className="container mx-auto px-6">
-              <div className="max-w-5xl mx-auto">
-                <h2 className="text-3xl font-bold mb-12 text-center">Özellik Karşılaştırması</h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-accent">
-                        <th className="text-left py-4 px-4">Özellik</th>
-                        <th className="text-center py-4 px-4">Başlangıç</th>
-                        <th className="text-center py-4 px-4">Profesyonel</th>
-                        <th className="text-center py-4 px-4">Kurumsal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        { name: "Masa Yönetimi", starter: true, professional: true, enterprise: true },
-                        { name: "Menü Yönetimi", starter: true, professional: true, enterprise: true },
-                        { name: "Sipariş Takibi", starter: true, professional: true, enterprise: true },
-                        { name: "Mobil Uyumluluk", starter: true, professional: true, enterprise: true },
-                        { name: "Müşteri Veri Tabanı", starter: true, professional: true, enterprise: true },
-                        { name: "Rezervasyon Sistemi", starter: false, professional: true, enterprise: true },
-                        { name: "Stok Takibi", starter: false, professional: true, enterprise: true },
-                        { name: "Çoklu Şube Desteği", starter: false, professional: true, enterprise: true },
-                        { name: "Raporlama", starter: "Temel", professional: "Gelişmiş", enterprise: "Kapsamlı" },
-                        { name: "Müşteri Sadakat Programı", starter: false, professional: false, enterprise: true },
-                        { name: "API Entegrasyonu", starter: false, professional: false, enterprise: true },
-                        { name: "Özel Geliştirmeler", starter: false, professional: false, enterprise: true },
-                        { name: "Teknik Destek", starter: "E-posta", professional: "7/24 Öncelikli", enterprise: "Tam Kapsamlı" }
-                      ].map((feature, i) => (
-                        <tr key={i} className="border-b border-accent/50">
-                          <td className="py-4 px-4">{feature.name}</td>
-                          <td className="text-center py-4 px-4">
-                            {typeof feature.starter === 'boolean' 
-                              ? (feature.starter 
-                                ? <span className="text-green-500">✓</span> 
-                                : <span className="text-red-500">✗</span>)
-                              : feature.starter}
-                          </td>
-                          <td className="text-center py-4 px-4">
-                            {typeof feature.professional === 'boolean' 
-                              ? (feature.professional 
-                                ? <span className="text-green-500">✓</span> 
-                                : <span className="text-red-500">✗</span>)
-                              : feature.professional}
-                          </td>
-                          <td className="text-center py-4 px-4">
-                            {typeof feature.enterprise === 'boolean' 
-                              ? (feature.enterprise 
-                                ? <span className="text-green-500">✓</span> 
-                                : <span className="text-red-500">✗</span>)
-                              : feature.enterprise}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </section>
-        </FadeInSection>
-
-        {/* SSS Bölümü */}
-        <FadeInSection delay={700}>
-          <section className="py-16">
-            <div className="container mx-auto px-6">
-              <div className="max-w-4xl mx-auto">
-                <h2 className="text-3xl font-bold mb-12 text-center">Sık Sorulan Sorular</h2>
-                <div className="space-y-8">
-                  {[
-                    {
-                      question: "Paketi satın aldıktan sonra güncellemeler ücretli mi?",
-                      answer: "Hayır, satın aldığınız paket süresi boyunca tüm güncellemelerden ücretsiz olarak yararlanabilirsiniz."
-                    },
-                    {
-                      question: "Özel geliştirme talep edebilir miyim?",
-                      answer: "Evet, işletmenizin özel ihtiyaçlarına göre ek geliştirmeler yapabiliyoruz. Profesyonel ve Kurumsal paketlerde bu hizmet ek ücrete tabiyken, Kurumsal pakette belirli saate kadar olan özel geliştirmeler paket dahilindedir."
-                    },
-                    {
-                      question: "Sisteme veri taşıma desteği sunuyor musunuz?",
-                      answer: "Evet, mevcut sisteminizden veri aktarımı için tüm paketlerimizde kurulum desteği sağlıyoruz. Veri miktarı ve karmaşıklığına göre ek ücret talep edilebilir."
-                    },
-                    {
-                      question: "Kurulum süreci ne kadar zaman alır?",
-                      answer: "Temel kurulum genellikle 1-2 iş günü içinde tamamlanır. Özel geliştirmeler ve yoğun veri aktarımı gerektiren durumlarda süreç 1-2 hafta alabilir."
-                    },
-                    {
-                      question: "Ödeme yöntemleri nelerdir?",
-                      answer: "Kredi kartı, banka havalesi ve çevrimiçi ödeme sistemlerini kabul ediyoruz. Yıllık ödemelerde %20 indirim sunuyoruz."
-                    }
-                  ].map((faq, i) => (
-                    <div key={i} className="border-b border-accent/30 pb-6">
-                      <h3 className="text-xl font-medium mb-3">{faq.question}</h3>
-                      <p className="text-muted">{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        </FadeInSection>
-
-        {/* İletişim CTA */}
-        <FadeInSection delay={800}>
-          <section className="py-16">
-            <div className="container mx-auto px-6">
-              <div className="max-w-4xl mx-auto text-center bg-accent/10 rounded-2xl p-12">
-                <h2 className="text-3xl font-bold mb-6">Hala sorularınız mı var?</h2>
-                <p className="text-lg text-muted mb-8">
-                  İhtiyaçlarınıza en uygun paketi seçmenize yardımcı olalım. Size özel demo gösterimi için iletişime geçin.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a 
-                    href="https://github.com/Melihcnz/RestoranWEB" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="px-8 py-4 bg-foreground text-background rounded-full hover:bg-foreground/90 transition-colors"
-                  >
-                    GitHub'da İncele
-                  </a>
-                  <Link 
-                    href="/portfolio#contact" 
-                    className="px-8 py-4 border border-accent rounded-full hover:bg-foreground hover:text-background transition-colors"
-                  >
-                    İletişime Geçin
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </section>
-        </FadeInSection>
+        
+        {/* Kampanya Banner */}
+        <PromotionBanner endDate="2024-08-15" />
       </main>
     </Layout>
   );

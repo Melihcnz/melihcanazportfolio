@@ -3,18 +3,71 @@
 import Layout from "../components/Layout";
 import FadeInSection from "../components/FadeInSection";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Company() {
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+  const resourcesRef = useRef(null);
+  const staggeredElements = useRef(null);
+  const parallaxBg = useRef(null);
+  const scrollItems = useRef([]);
+
+  useEffect(() => {
+    setIsMounted(true);
+    
+    const handleScroll = () => {
+      const position = window.scrollY;
+      setScrollPosition(position);
+      
+      // Parallax effect for background
+      if (parallaxBg.current) {
+        parallaxBg.current.style.transform = `translateY(${position * 0.1}px)`;
+      }
+
+      // Reveal animations for scroll items
+      if (scrollItems.current.length > 0) {
+        scrollItems.current.forEach(el => {
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          const isInView = rect.top < window.innerHeight * 0.85;
+          
+          if (isInView) {
+            el.classList.add('active');
+          }
+        });
+      }
+
+      // Staggered animation
+      if (staggeredElements.current) {
+        const rect = staggeredElements.current.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight * 0.85;
+        
+        if (isInView) {
+          staggeredElements.current.classList.add('visible');
+        }
+      }
+    };
+
+    // Initialize scroll items
+    scrollItems.current = document.querySelectorAll('.scroll-reveal');
+    
+    window.addEventListener("scroll", handleScroll);
+    // Initial check
+    handleScroll();
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    console.log('E-posta:', email);
-    setEmail('');
-    // Burada abonelik mantığı gerçekleştirilebilir
+    // Simülasyon: Email abone işlemi
+    setMessage("Başarıyla abone oldunuz!");
+    setEmail("");
   };
-  
+
   const resources = [
     {
       title: "Blog Yazıları",
@@ -94,11 +147,20 @@ export default function Company() {
     <Layout>
       <div className="min-h-screen bg-background transition-colors duration-300">
         {/* Hero Section */}
-        <section className="pt-32 pb-20">
-          <div className="container mx-auto px-6">
+        <section className="pt-32 pb-20 relative">
+          <div className="absolute inset-0 overflow-hidden">
+            <div 
+              className="absolute w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl" 
+              style={{ 
+                top: isMounted ? -100 - scrollPosition * 0.05 : -100, 
+                left: isMounted ? -150 - scrollPosition * 0.02 : -150
+              }}
+            ></div>
+          </div>
+          <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-4xl">
               <FadeInSection delay={200}>
-                <h1 className="text-7xl font-bold mb-8">Kaynaklar</h1>
+                <h1 className="text-7xl font-bold mb-8 animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground">Kaynaklar</h1>
               </FadeInSection>
               <FadeInSection delay={400}>
                 <p className="text-xl text-muted">
@@ -117,39 +179,47 @@ export default function Company() {
               {resources.map((section, sectionIndex) => (
                 <FadeInSection delay={300 + (sectionIndex * 200)} key={section.title}>
                   <div>
-                    <h2 className="text-4xl font-bold mb-4">{section.title}</h2>
+                    <h2 className="text-4xl font-bold mb-4 relative inline-block">
+                      {section.title}
+                      <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-indigo-600 to-purple-600"></span>
+                    </h2>
                     <p className="text-muted mb-12 max-w-2xl">{section.description}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-list">
                       {section.items.map((item, itemIndex) => (
                         <FadeInSection delay={500 + (itemIndex * 200)} key={item.title}>
-                          <div className="group p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-300 hover:-translate-y-1">
-                            <h3 className="text-xl font-bold mb-4">{item.title}</h3>
-                            <div className="space-y-2 mb-6">
-                              {'date' in item && (
-                                <>
-                                  <p className="text-sm text-muted">{item.date}</p>
-                                  <p className="text-sm text-muted">Okuma süresi: {item.readTime}</p>
-                                </>
-                              )}
-                              {'duration' in item && (
-                                <>
-                                  <p className="text-sm text-muted">Süre: {item.duration}</p>
-                                  <p className="text-sm text-muted">Seviye: {item.level}</p>
-                                </>
-                              )}
-                              {'stars' in item && (
-                                <>
-                                  <p className="text-sm text-muted">⭐ {item.stars}</p>
-                                  <p className="text-sm text-muted">👥 {item.contributors} katkıda bulunan</p>
-                                </>
-                              )}
+                          <div className="group card-3d p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-500 hover:scale-105">
+                            <div className="card-3d-inner">
+                              <h3 className="text-xl font-bold mb-4 text-reveal">
+                                <span>{item.title}</span>
+                              </h3>
+                              <div className="space-y-2 mb-6">
+                                {'date' in item && (
+                                  <>
+                                    <p className="text-sm text-muted">{item.date}</p>
+                                    <p className="text-sm text-muted">Okuma süresi: {item.readTime}</p>
+                                  </>
+                                )}
+                                {'duration' in item && (
+                                  <>
+                                    <p className="text-sm text-muted">Süre: {item.duration}</p>
+                                    <p className="text-sm text-muted">Seviye: {item.level}</p>
+                                  </>
+                                )}
+                                {'stars' in item && (
+                                  <>
+                                    <p className="text-sm text-muted">⭐ {item.stars}</p>
+                                    <p className="text-sm text-muted">👥 {item.contributors} katkıda bulunan</p>
+                                  </>
+                                )}
+                              </div>
+                              <Link 
+                                href={item.link}
+                                className="inline-flex items-center text-sm group-hover:text-foreground transition-colors group"
+                              >
+                                <span>Daha Fazla Bilgi</span>
+                                <span className="inline-block ml-2 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
+                              </Link>
                             </div>
-                            <Link 
-                              href={item.link}
-                              className="inline-flex items-center text-sm group-hover:text-foreground transition-colors"
-                            >
-                              Daha Fazla Bilgi →
-                            </Link>
                           </div>
                         </FadeInSection>
                       ))}
@@ -163,10 +233,19 @@ export default function Company() {
 
         {/* Newsletter Section */}
         <FadeInSection delay={600}>
-          <section className="py-32 bg-foreground/5">
-            <div className="container mx-auto px-6">
+          <section className="py-32 bg-foreground/5 relative">
+            <div className="absolute inset-0 overflow-hidden">
+              <div 
+                className="absolute w-full h-32 bg-gradient-to-r from-indigo-600/10 via-purple-600/5 to-indigo-600/10 blur-2xl" 
+                style={{ 
+                  top: isMounted ? 100 + scrollPosition * 0.05 : 100,
+                  transform: 'skewY(-6deg)'
+                }}
+              ></div>
+            </div>
+            <div className="container mx-auto px-6 relative z-10">
               <div className="max-w-3xl mx-auto text-center space-y-8">
-                <h2 className="text-4xl font-bold">Güncel Kalın</h2>
+                <h2 className="text-4xl font-bold animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground">Güncel Kalın</h2>
                 <p className="text-muted">
                   Yeni blog yazıları, eğitim içerikleri ve proje güncellemelerinden haberdar olun.
                 </p>
@@ -176,15 +255,16 @@ export default function Company() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="E-posta adresiniz" 
-                    className="flex-1 px-6 py-4 bg-foreground/5 rounded-xl focus:outline-none focus:bg-foreground/10 transition-colors"
+                    className="flex-1 px-6 py-4 bg-foreground/5 rounded-xl focus:outline-none focus:bg-foreground/10 transition-colors focus:scale-[1.01] transform"
                   />
                   <button 
                     type="submit"
-                    className="px-8 py-4 bg-foreground text-background rounded-xl hover:bg-foreground/90 transition-colors"
+                    className="px-8 py-4 bg-foreground text-background rounded-xl hover:bg-foreground/90 transition-colors hover:scale-105 transform duration-300 btn-shiny"
                   >
                     Abone Ol
                   </button>
                 </form>
+                {message && <p className="text-sm text-green-500">{message}</p>}
               </div>
             </div>
           </section>
