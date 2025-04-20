@@ -73,7 +73,7 @@ export default function Portfolio() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background transition-colors duration-300">
         {/* Hero Section */}
         <section className="pt-32 pb-20">
           <div className="container mx-auto px-6">
@@ -103,7 +103,7 @@ export default function Portfolio() {
                     href="https://github.com/Melihcnz" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="group relative px-6 py-3 overflow-hidden rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                    className="group relative px-6 py-3 overflow-hidden rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
                     <span className="relative z-10">GitHub</span>
                   </a>
@@ -111,7 +111,7 @@ export default function Portfolio() {
                     href="https://www.linkedin.com/in/melih-canaz-ab9513155" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="group relative px-6 py-3 overflow-hidden rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                    className="group relative px-6 py-3 overflow-hidden rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
                     <span className="relative z-10">LinkedIn</span>
                   </a>
@@ -119,7 +119,7 @@ export default function Portfolio() {
                     href="https://twitter.com/meelihcnz" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="group relative px-6 py-3 overflow-hidden rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                    className="group relative px-6 py-3 overflow-hidden rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
                     <span className="relative z-10">Twitter</span>
                   </a>
@@ -150,7 +150,7 @@ export default function Portfolio() {
                   "Vite",
                 ].map((skill, i) => (
                   <FadeInSection delay={400 + (i * 100)} key={skill}>
-                    <div className="group relative p-8 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+                    <div className="group relative p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-300 hover:-translate-y-1">
                       <p className="font-medium text-center">{skill}</p>
                     </div>
                   </FadeInSection>
@@ -168,14 +168,14 @@ export default function Portfolio() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project, index) => (
                   <FadeInSection delay={500 + (index * 200)} key={project.title}>
-                    <div className="group relative rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                    <div className="group relative rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                       <div className="aspect-video bg-gradient-to-br from-accent/20 to-transparent"></div>
                       <div className="p-8 space-y-4">
                         <h3 className="text-xl font-bold">{project.title}</h3>
                         <p className="text-muted">{project.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {project.tech.map((tech) => (
-                            <span key={tech} className="text-xs px-3 py-1 rounded-full bg-white/5">
+                            <span key={tech} className="text-xs px-3 py-1 rounded-full bg-foreground/5">
                               {tech}
                             </span>
                           ))}
@@ -184,7 +184,7 @@ export default function Portfolio() {
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center text-sm group-hover:text-white transition-colors"
+                          className="inline-flex items-center text-sm hover:text-foreground transition-colors"
                         >
                           GitHub'da İncele →
                         </a>
@@ -204,7 +204,7 @@ export default function Portfolio() {
               <h2 className="text-4xl font-bold mb-16">Deneyim</h2>
               <div className="space-y-12">
                 <FadeInSection delay={600}>
-                  <div className="p-8 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300">
+                  <div className="p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-300">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                       <h3 className="text-xl font-bold">Freelance Full Stack Developer</h3>
                       <span className="text-muted">2022 - Günümüz</span>
@@ -217,7 +217,7 @@ export default function Portfolio() {
                 </FadeInSection>
                 
                 <FadeInSection delay={800}>
-                  <div className="p-8 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300">
+                  <div className="p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-300">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                       <h3 className="text-xl font-bold">Stajyer Yazılım Geliştirici</h3>
                       <span className="text-muted">2021 - 2022</span>
@@ -235,7 +235,7 @@ export default function Portfolio() {
 
         {/* Contact Section */}
         <FadeInSection delay={600}>
-          <section className="py-32">
+          <section className="py-32" id="contact">
             <div className="container mx-auto px-6">
               <h2 className="text-4xl font-bold mb-16">İletişim</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
@@ -245,43 +245,53 @@ export default function Portfolio() {
                       Yeni projeler ve iş birlikleri için benimle iletişime geçebilirsiniz.
                     </p>
                     <div className="flex flex-col gap-2">
-                      <a href="mailto:mcanaz1234@gmail.com" className="text-sm hover:text-white transition-colors">mcanaz1234@gmail.com</a>
-                      <a href="https://twitter.com/meelihcnz" className="text-sm hover:text-white transition-colors">@meelihcnz</a>
-                      <a href="https://www.instagram.com/meelihcnz" className="text-sm hover:text-white transition-colors">@meelihcnz</a>
+                      <a href="mailto:mcanaz1234@gmail.com" className="text-sm hover:text-foreground transition-colors">mcanaz1234@gmail.com</a>
+                      <a href="https://twitter.com/meelihcnz" className="text-sm hover:text-foreground transition-colors">@meelihcnz</a>
+                      <a href="https://www.instagram.com/meelihcnz" className="text-sm hover:text-foreground transition-colors">@meelihcnz</a>
                     </div>
                   </div>
                 </FadeInSection>
+                
                 <FadeInSection delay={800}>
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <input 
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="İsim" 
-                      className="w-full px-6 py-4 bg-white/5 rounded-xl focus:outline-none focus:bg-white/10 transition-colors"
-                    />
-                    <input 
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="E-posta" 
-                      className="w-full px-6 py-4 bg-white/5 rounded-xl focus:outline-none focus:bg-white/10 transition-colors"
-                    />
-                    <textarea 
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      placeholder="Mesaj" 
-                      rows="4"
-                      className="w-full px-6 py-4 bg-white/5 rounded-xl focus:outline-none focus:bg-white/10 transition-colors"
-                    ></textarea>
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium mb-2">İsim</label>
+                      <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-foreground/5 rounded-lg focus:outline-none focus:bg-foreground/10 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium mb-2">E-posta</label>
+                      <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-foreground/5 rounded-lg focus:outline-none focus:bg-foreground/10 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium mb-2">Mesaj</label>
+                      <textarea 
+                        id="message" 
+                        name="message" 
+                        rows="5"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-foreground/5 rounded-lg focus:outline-none focus:bg-foreground/10 transition-colors"
+                      ></textarea>
+                    </div>
                     <button 
-                      type="submit"
-                      className="w-full px-6 py-4 rounded-xl bg-white text-black hover:bg-white/90 transition-colors"
+                      type="submit" 
+                      className="px-8 py-3 bg-foreground text-background rounded-full hover:bg-foreground/90 transition-colors"
                     >
-                      Mesaj Gönder
+                      Gönder
                     </button>
                   </form>
                 </FadeInSection>

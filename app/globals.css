@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark Theme (default) */
+:root[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --muted: #737373;
+  --accent: #404040;
+  --card: rgba(0, 0, 0, 0.3);
+  --card-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.1);
+  --ring: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+}
+
+/* Light Theme */
+:root[data-theme="light"] {
+  --background: #f8f8f8;
+  --foreground: #0a0a0a;
+  --muted: #6b7280;
+  --accent: #e5e7eb;
+  --card: rgba(255, 255, 255, 0.8);
+  --card-foreground: #000000;
+  --border: rgba(0, 0, 0, 0.1);
+  --ring: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+}
+
+/* Fallback for when data-theme is not set */
 :root {
   --background: #0a0a0a;
   --foreground: #fafafa;
@@ -22,7 +51,8 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Remove media query since we're using a toggle now */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #09090b;
     --foreground: #fafafa;
@@ -31,7 +61,7 @@
     --border: #27272a;
     --ring: #fafafa;
   }
-}
+} */
 
 @layer base {
   body {
@@ -42,40 +72,89 @@
 }
 
 .glass-card {
-  background: rgba(0, 20, 0, 0.3);
+  background: rgba(var(--background-rgb), 0.3);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 255, 0, 0.1);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.05);
+  border: 1px solid rgba(var(--foreground-rgb), 0.1);
+  box-shadow: 0 0 20px rgba(var(--foreground-rgb), 0.05);
 }
 
 .stats-card {
-  background: linear-gradient(145deg, rgba(0, 20, 0, 0.3), rgba(0, 40, 0, 0.3));
-  border: 1px solid rgba(0, 255, 0, 0.1);
+  background: linear-gradient(145deg, rgba(var(--background-rgb), 0.3), rgba(var(--background-rgb), 0.4));
+  border: 1px solid rgba(var(--foreground-rgb), 0.1);
   backdrop-filter: blur(10px);
 }
 
 .green-glow {
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  text-shadow: 0 0 10px rgba(var(--foreground-rgb), 0.5);
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
-  border-color: rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 20px rgba(var(--foreground-rgb), 0.2);
+  border-color: rgba(var(--foreground-rgb), 0.3);
   transition: all 0.3s ease;
 }
 
+/* Enhanced animations */
 .fade-in {
-  animation: fadeIn 0.5s ease-in;
+  animation: fadeIn 0.8s ease-in;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Slide in from left animation */
+.slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide in from right animation */
+.slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale animation */
+.scale-in {
+  animation: scaleIn 0.8s ease-out forwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -108,11 +187,38 @@
   gap: 2rem;
 }
 
+/* Theme toggle animation */
+.theme-toggle {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: var(--accent);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--foreground);
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle[data-theme="light"]::before {
+  transform: translateX(24px);
+}
+
 /* Cursor Styles */
 .custom-cursor {
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--foreground);
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
@@ -120,13 +226,14 @@
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s, background-color 0.2s;
   mix-blend-mode: difference;
+  opacity: 0.3;
 }
 
 /* Navigation Link Animations */
 .nav-link {
   position: relative;
   padding: 0.5rem 0;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 .nav-link::before {
@@ -137,7 +244,7 @@
   bottom: 0;
   left: 50%;
   background-color: currentColor;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 .nav-link:hover::before {
@@ -152,7 +259,8 @@
 .nav-link:hover ~ .custom-cursor {
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--foreground);
+  opacity: 0.2;
 }
 
 /* Button Animation */
@@ -168,10 +276,11 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--foreground);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: width 0.6s, height 0.6s;
+  opacity: 0.1;
 }
 
 .nav-button:hover::before {
@@ -180,7 +289,7 @@
 }
 
 /* Page Transition */
-@keyframes fadeIn {
+@keyframes pageEnter {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -192,7 +301,7 @@
 }
 
 .page-transition {
-  animation: fadeIn 0.6s ease-out;
+  animation: pageEnter 0.8s ease-out;
 }
 
 /* Hover Effect for all interactive elements */
@@ -204,5 +313,48 @@ a:hover ~ .custom-cursor,
 button:hover ~ .custom-cursor {
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--foreground);
+  opacity: 0.2;
+}
+
+/* Price card styles */
+.price-card {
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+}
+
+.price-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.price-card-header {
+  padding: 2rem;
+  background: linear-gradient(to right, var(--accent), var(--background));
+  border-bottom: 1px solid var(--border);
+}
+
+.price-card-body {
+  padding: 2rem;
+}
+
+.price-tag {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.feature-list li {
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.feature-list li::before {
+  content: '✓';
+  margin-right: 0.8rem;
+  color: #22c55e;
+  font-weight: bold;
 }

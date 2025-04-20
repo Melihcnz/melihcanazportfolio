@@ -1,8 +1,20 @@
+"use client";
+
 import Layout from "../components/Layout";
 import FadeInSection from "../components/FadeInSection";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Company() {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    console.log('E-posta:', email);
+    setEmail('');
+    // Burada abonelik mantığı gerçekleştirilebilir
+  };
+  
   const resources = [
     {
       title: "Blog Yazıları",
@@ -80,7 +92,7 @@ export default function Company() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background transition-colors duration-300">
         {/* Hero Section */}
         <section className="pt-32 pb-20">
           <div className="container mx-auto px-6">
@@ -110,7 +122,7 @@ export default function Company() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                       {section.items.map((item, itemIndex) => (
                         <FadeInSection delay={500 + (itemIndex * 200)} key={item.title}>
-                          <div className="group p-8 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+                          <div className="group p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-300 hover:-translate-y-1">
                             <h3 className="text-xl font-bold mb-4">{item.title}</h3>
                             <div className="space-y-2 mb-6">
                               {'date' in item && (
@@ -134,7 +146,7 @@ export default function Company() {
                             </div>
                             <Link 
                               href={item.link}
-                              className="inline-flex items-center text-sm group-hover:text-white transition-colors"
+                              className="inline-flex items-center text-sm group-hover:text-foreground transition-colors"
                             >
                               Daha Fazla Bilgi →
                             </Link>
@@ -151,23 +163,28 @@ export default function Company() {
 
         {/* Newsletter Section */}
         <FadeInSection delay={600}>
-          <section className="py-32 bg-white/5">
+          <section className="py-32 bg-foreground/5">
             <div className="container mx-auto px-6">
               <div className="max-w-3xl mx-auto text-center space-y-8">
                 <h2 className="text-4xl font-bold">Güncel Kalın</h2>
                 <p className="text-muted">
                   Yeni blog yazıları, eğitim içerikleri ve proje güncellemelerinden haberdar olun.
                 </p>
-                <div className="flex gap-4 max-w-md mx-auto">
+                <form onSubmit={handleSubscribe} className="flex gap-4 max-w-md mx-auto">
                   <input 
                     type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="E-posta adresiniz" 
-                    className="flex-1 px-6 py-4 bg-white/5 rounded-xl focus:outline-none focus:bg-white/10 transition-colors"
+                    className="flex-1 px-6 py-4 bg-foreground/5 rounded-xl focus:outline-none focus:bg-foreground/10 transition-colors"
                   />
-                  <button className="px-8 py-4 bg-white text-black rounded-xl hover:bg-white/90 transition-colors">
+                  <button 
+                    type="submit"
+                    className="px-8 py-4 bg-foreground text-background rounded-xl hover:bg-foreground/90 transition-colors"
+                  >
                     Abone Ol
                   </button>
-                </div>
+                </form>
               </div>
             </div>
           </section>

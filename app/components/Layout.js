@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Layout({ children }) {
   const [email, setEmail] = useState("");
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const cursor = document.createElement('div');
@@ -32,10 +34,10 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Header */}
       <header className="fixed w-full z-50">
-        <nav className="backdrop-blur-sm bg-black/20">
+        <nav className="backdrop-blur-sm bg-background/20">
           <div className="container mx-auto">
             <div className="flex items-center justify-between h-24 px-4 md:px-8">
               <Link href="/" className="text-xl font-medium tracking-tight hover:opacity-50 transition-opacity">
@@ -44,10 +46,16 @@ export default function Layout({ children }) {
               <div className="hidden md:flex items-center gap-12">
                 <Link href="/" className="nav-link text-sm tracking-wide">Ana Sayfa</Link>
                 <Link href="/portfolio" className="nav-link text-sm tracking-wide">Projeler</Link>
-                <Link href="/launches" className="nav-link text-sm tracking-wide">Hizmetler</Link>
+                <Link href="/pricing" className="nav-link text-sm tracking-wide">Fiyatlandırma</Link>
                 <Link href="/company" className="nav-link text-sm tracking-wide">Kaynaklar</Link>
+                <div 
+                  className="theme-toggle" 
+                  data-theme={theme} 
+                  onClick={toggleTheme}
+                  aria-label={theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç'}
+                ></div>
               </div>
-              <button className="text-sm px-6 py-2.5 border rounded-full hover:bg-white hover:text-black transition-all duration-300 nav-button">
+              <button className="text-sm px-6 py-2.5 border rounded-full hover:bg-foreground hover:text-background transition-all duration-300 nav-button">
                 İletişime Geç
               </button>
             </div>
@@ -58,7 +66,7 @@ export default function Layout({ children }) {
       {children}
 
       {/* Footer */}
-      <footer className="py-10">
+      <footer className="py-10 bg-background transition-colors duration-300">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
             <div className="space-y-6">
@@ -75,7 +83,7 @@ export default function Layout({ children }) {
               <div className="flex flex-col gap-4">
                 <Link href="/" className="text-sm text-muted hover:text-foreground transition-colors">Ana Sayfa</Link>
                 <Link href="/portfolio" className="text-sm text-muted hover:text-foreground transition-colors">Projeler</Link>
-                <Link href="/launches" className="text-sm text-muted hover:text-foreground transition-colors">Hizmetler</Link>
+                <Link href="/pricing" className="text-sm text-muted hover:text-foreground transition-colors">Fiyatlandırma</Link>
                 <Link href="/company" className="text-sm text-muted hover:text-foreground transition-colors">Kaynaklar</Link>
               </div>
             </div>
@@ -99,7 +107,7 @@ export default function Layout({ children }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="E-posta adresiniz" 
-                    className="flex-1 px-4 py-2 bg-white/5 border border-accent/10 rounded-lg focus:outline-none focus:border-foreground/20"
+                    className="flex-1 px-4 py-2 bg-foreground/5 border border-accent/10 rounded-lg focus:outline-none focus:border-foreground/20 transition-colors duration-300"
                   />
                   <button type="submit" className="px-4 py-2 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors">
                     Gönder
