@@ -6,6 +6,8 @@
 :root[data-theme="dark"] {
   --background: #0a0a0a;
   --foreground: #fafafa;
+  --foreground-rgb: 250, 250, 250;
+  --background-rgb: 10, 10, 10;
   --muted: #737373;
   --accent: #404040;
   --card: rgba(0, 0, 0, 0.3);
@@ -20,6 +22,8 @@
 :root[data-theme="light"] {
   --background: #f8f8f8;
   --foreground: #0a0a0a;
+  --foreground-rgb: 10, 10, 10;
+  --background-rgb: 248, 248, 248;
   --muted: #6b7280;
   --accent: #e5e7eb;
   --card: rgba(255, 255, 255, 0.8);
@@ -34,6 +38,8 @@
 :root {
   --background: #0a0a0a;
   --foreground: #fafafa;
+  --foreground-rgb: 250, 250, 250;
+  --background-rgb: 10, 10, 10;
   --muted: #737373;
   --accent: #404040;
   --card: rgba(0, 0, 0, 0.3);
@@ -67,7 +73,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans), system-ui, sans-serif;
-    cursor: none;
+    cursor: auto !important;
   }
 }
 
@@ -96,13 +102,13 @@
 
 /* Enhanced animations */
 .fade-in {
-  animation: fadeIn 0.8s ease-in;
+  animation: fadeIn 0.6s ease-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -187,6 +193,357 @@
   gap: 2rem;
 }
 
+/* Hamburger Menu Styles */
+.hamburger-btn {
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.hamburger-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(var(--foreground-rgb), 0.05);
+  border-radius: 12px;
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hamburger-btn:hover::before {
+  transform: scale(1);
+}
+
+.hamburger-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(var(--foreground-rgb), 0.1);
+}
+
+.hamburger-line {
+  display: flex;
+  flex-direction: column;
+  width: 26px;
+  height: 20px;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.hamburger-line span {
+  display: block;
+  height: 2.5px;
+  width: 100%;
+  background-color: var(--foreground);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.hamburger-line.open span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+  background-color: var(--foreground);
+}
+
+.hamburger-line.open span:nth-child(2) {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.hamburger-line.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+  background-color: var(--foreground);
+}
+
+/* Hamburger pulse effect when menu is open */
+.hamburger-btn:has(.hamburger-line.open) {
+  animation: pulse 0.6s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Enhanced Floating Animation */
+.floating-element {
+  animation: floatEnhanced 6s ease-in-out infinite;
+}
+
+@keyframes floatEnhanced {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(-2deg);
+  }
+}
+
+/* Enhanced Gradient Animation */
+.animate-gradient {
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Glass Morphism Effect */
+.glass-card-enhanced {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Magnetic Hover Effect */
+.magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.magnetic-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Shimmer Effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Glow Border Animation */
+.glow-border {
+  position: relative;
+  background: linear-gradient(45deg, var(--background), var(--background));
+  border-radius: 20px;
+  padding: 2px;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #6366f1, #8b5cf6, #06b6d4, #6366f1);
+  background-size: 300% 300%;
+  animation: gradientShift 6s ease infinite;
+  z-index: -1;
+}
+
+/* Enhanced Card Hover Effects */
+.card-hover-enhanced {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-hover-enhanced:hover {
+  transform: translateY(-12px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Text Reveal Animation */
+.text-reveal-enhanced {
+  overflow: hidden;
+  position: relative;
+}
+
+.text-reveal-enhanced::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--background);
+  transform: translateX(-100%);
+  animation: textReveal 1.5s ease-out forwards;
+}
+
+@keyframes textReveal {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Mobile Menu Styles */
+.mobile-menu {
+  position: fixed;
+  top: 96px; /* Header height */
+  left: 0;
+  right: 0;
+  z-index: 40;
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile Navigation Links */
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-nav-link:hover {
+  background-color: rgba(var(--foreground-rgb), 0.08);
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(var(--foreground-rgb), 0.1);
+}
+
+.mobile-nav-link:active {
+  transform: translateX(4px) scale(0.98);
+}
+
+.mobile-nav-icon {
+  font-size: 18px;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.mobile-nav-link:hover .mobile-nav-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Mobile Contact Button */
+.mobile-contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(var(--foreground-rgb), 0.05), rgba(var(--foreground-rgb), 0.1));
+}
+
+.mobile-contact-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(var(--foreground-rgb), 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.mobile-contact-btn:hover::before {
+  left: 100%;
+}
+
+.mobile-contact-btn:hover {
+  border-color: var(--foreground);
+  box-shadow: 0 8px 25px rgba(var(--foreground-rgb), 0.15);
+  transform: translateY(-2px);
+}
+
+/* Staggered animation for menu items */
+.mobile-menu.open .mobile-nav-link:nth-child(1) {
+  animation: slideInMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+
+.mobile-menu.open .mobile-nav-link:nth-child(2) {
+  animation: slideInMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+.mobile-menu.open .mobile-nav-link:nth-child(3) {
+  animation: slideInMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+.mobile-menu.open .mobile-nav-link:nth-child(4) {
+  animation: slideInMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+
+.mobile-menu.open .mobile-contact-btn {
+  animation: slideInMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+}
+
+@keyframes slideInMobile {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* Theme toggle animation */
 .theme-toggle {
   position: relative;
@@ -214,20 +571,7 @@
   transform: translateX(24px);
 }
 
-/* Cursor Styles */
-.custom-cursor {
-  width: 20px;
-  height: 20px;
-  background: var(--foreground);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s, height 0.2s, background-color 0.2s;
-  mix-blend-mode: difference;
-  opacity: 0.3;
-}
+/* Custom cursor disabled */
 
 /* Navigation Link Animations */
 .nav-link {
@@ -256,12 +600,7 @@
   transform: translateY(-2px);
 }
 
-.nav-link:hover ~ .custom-cursor {
-  width: 40px;
-  height: 40px;
-  background: var(--foreground);
-  opacity: 0.2;
-}
+/* Custom cursor interactions disabled */
 
 /* Button Animation */
 .nav-button {
@@ -309,13 +648,7 @@ a, button {
   transition: all 0.3s ease;
 }
 
-a:hover ~ .custom-cursor,
-button:hover ~ .custom-cursor {
-  width: 40px;
-  height: 40px;
-  background: var(--foreground);
-  opacity: 0.2;
-}
+/* Custom cursor hover effects disabled */
 
 /* Price card styles */
 .price-card {
@@ -377,29 +710,7 @@ button:hover ~ .custom-cursor {
   animation: gradient 8s ease infinite;
 }
 
-/* Mouse tracking glow effect */
-.mouse-glow {
-  position: relative;
-  overflow: hidden;
-}
-
-.mouse-glow::before {
-  content: '';
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.mouse-glow:hover::before {
-  opacity: 1;
-}
+/* Mouse tracking glow effect - DISABLED */
 
 /* Improved page transitions */
 @keyframes pageEnter {
@@ -949,3 +1260,103 @@ button:hover ~ .custom-cursor {
     transform: translateX(100%);
   }
 }
+
+/* Mobile Responsive Improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Fix left margin issues on mobile */
+  .px-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Prevent content from sticking to left edge */
+  .mobile-safe-margin {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  
+  /* Ensure proper spacing on mobile */
+  .grid {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  /* Mobile text adjustments */
+  .text-4xl {
+    font-size: 2rem !important;
+  }
+  
+  .text-5xl {
+    font-size: 2.5rem !important;
+  }
+  
+  .text-6xl {
+    font-size: 3rem !important;
+  }
+  
+  .text-7xl {
+    font-size: 3.5rem !important;
+  }
+  
+  /* Better mobile padding */
+  .py-32 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  
+  /* Mobile grid improvements */
+  .grid-cols-3 {
+    gap: 0.75rem !important;
+  }
+  
+  /* Newsletter form mobile fix */
+  .flex-col.sm\:flex-row {
+    flex-direction: column;
+  }
+  
+  .flex-col.sm\:flex-row button {
+    width: 100%;
+  }
+  
+  /* Hero section mobile improvements */
+  .leading-tight {
+    line-height: 1.2;
+  }
+  
+  /* Mobile card spacing */
+  .rounded-2xl {
+    border-radius: 1rem;
+  }
+  
+  /* Prevent overflow on mobile */
+  .overflow-hidden {
+    overflow: hidden;
+  }
+}
+
+/* Skills Progress Bar Animation */
+.skill-progress {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: fillProgress 1.5s ease-out forwards;
+}
+
+@keyframes fillProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+/* Skill bars enter animation with delay */
+.skill-progress:nth-child(1) { animation-delay: 0.2s; }
+.skill-progress:nth-child(2) { animation-delay: 0.4s; }
+.skill-progress:nth-child(3) { animation-delay: 0.6s; }
+.skill-progress:nth-child(4) { animation-delay: 0.8s; }

@@ -6,25 +6,35 @@ import { useTheme } from "../context/ThemeContext";
 
 export default function Layout({ children }) {
   const [email, setEmail] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
+  // Custom cursor disabled
+
+  // Mobile menü açıkken body scroll'unu engelle
   useEffect(() => {
-    const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    document.body.appendChild(cursor);
-
-    const handleMouseMove = (e) => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeChild(cursor);
+      document.body.style.overflow = 'unset';
     };
-  }, []);
+  }, [isMobileMenuOpen]);
+
+  // Mobile menü dışında tıklandığında menüyü kapat
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileMenuOpen && !event.target.closest('.mobile-menu') && !event.target.closest('.hamburger-btn')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isMobileMenuOpen]);
 
   const handleEmailSubmit = (e) => {
     e.preventDefault();
@@ -37,7 +47,7 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Header */}
       <header className="fixed w-full z-50">
-        <nav className="backdrop-blur-sm bg-background/20">
+        <nav className="backdrop-blur-lg bg-background/30">
           <div className="container mx-auto">
             <div className="flex items-center justify-between h-24 px-4 md:px-8">
               <Link href="/" className="text-xl font-medium tracking-tight hover:opacity-50 transition-opacity">
@@ -55,12 +65,85 @@ export default function Layout({ children }) {
                   aria-label={theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç'}
                 ></div>
               </div>
-              <button className="text-sm px-6 py-2.5 border rounded-full hover:bg-foreground hover:text-background transition-all duration-300 nav-button">
+
+              {/* Mobile menu button */}
+              <div className="md:hidden flex items-center gap-4">
+                <div 
+                  className="theme-toggle" 
+                  data-theme={theme} 
+                  onClick={toggleTheme}
+                  aria-label={theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç'}
+                ></div>
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="hamburger-btn p-2"
+                  aria-label="Menüyü aç/kapat"
+                >
+                  <div className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </button>
+              </div>
+
+              <button className="hidden md:block text-sm px-6 py-2.5 border rounded-full hover:bg-foreground hover:text-background transition-all duration-300 nav-button">
                 İletişime Geç
               </button>
             </div>
           </div>
         </nav>
+
+        {/* Mobile menu */}
+        <div className={`mobile-menu md:hidden ${isMobileMenuOpen ? 'open' : ''}`}>
+          <div className="backdrop-blur-xl bg-background/98 border-t border-accent/30 shadow-2xl">
+            <div className="container mx-auto px-6 py-8">
+              <div className="flex flex-col space-y-2">
+                <Link 
+                  href="/" 
+                  className="mobile-nav-link text-base tracking-wide py-4 px-4 rounded-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">🏠</span>
+                  Ana Sayfa
+                </Link>
+                <Link 
+                  href="/portfolio" 
+                  className="mobile-nav-link text-base tracking-wide py-4 px-4 rounded-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">💼</span>
+                  Projeler
+                </Link>
+                <Link 
+                  href="/pricing" 
+                  className="mobile-nav-link text-base tracking-wide py-4 px-4 rounded-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">💰</span>
+                  Fiyatlandırma
+                </Link>
+                <Link 
+                  href="/company" 
+                  className="mobile-nav-link text-base tracking-wide py-4 px-4 rounded-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">📚</span>
+                  Kaynaklar
+                </Link>
+                <div className="pt-4 border-t border-accent/20 mt-4">
+                  <button 
+                    className="mobile-contact-btn text-base px-8 py-4 border-2 border-foreground rounded-2xl hover:bg-foreground hover:text-background transition-all duration-500 w-full font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span className="mobile-nav-icon">📧</span>
+                    İletişime Geç
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </header>
 
       {children}

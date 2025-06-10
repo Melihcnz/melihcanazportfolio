@@ -168,36 +168,94 @@ export default function Pricing() {
   return (
     <Layout>
       <main className="page-transition">
+        {/* Enhanced Hero Section */}
         <section className="pt-32 pb-16 min-h-screen relative overflow-hidden">
-          {/* Arka plan efektleri */}
+          {/* Enhanced Background Effects */}
           <div className="absolute inset-0 -z-10 overflow-hidden">
             <div 
-              className="absolute w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl" 
+              className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-r from-indigo-600/15 to-purple-600/15 blur-3xl" 
               style={{ 
-                top: isMounted ? -100 - scrollPosition * 0.05 : -100, 
-                left: isMounted ? -200 - scrollPosition * 0.02 : -200
+                top: isMounted ? -150 - scrollPosition * 0.05 : -150, 
+                left: isMounted ? -250 - scrollPosition * 0.02 : -250,
+                transform: `rotate(${scrollPosition * 0.05}deg)`
               }}
             ></div>
             <div 
-              className="absolute w-96 h-96 rounded-full bg-purple-600/10 blur-3xl" 
+              className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-r from-emerald-600/10 to-cyan-600/10 blur-3xl" 
               style={{ 
-                bottom: isMounted ? 100 - scrollPosition * 0.03 : 100, 
-                right: isMounted ? -150 - scrollPosition * 0.01 : -150
+                bottom: isMounted ? -100 - scrollPosition * 0.03 : -100, 
+                right: isMounted ? -200 - scrollPosition * 0.01 : -200,
+                transform: `rotate(-${scrollPosition * 0.03}deg)`
+              }}
+            ></div>
+            <div 
+              className="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-r from-pink-600/8 to-purple-600/8 blur-2xl" 
+              style={{ 
+                top: isMounted ? 300 - scrollPosition * 0.04 : 300, 
+                left: isMounted ? 100 - scrollPosition * 0.06 : 100
               }}
             ></div>
           </div>
+
+          {/* Floating Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-32 left-1/4 w-6 h-6 bg-indigo-400/20 rounded-full floating-element"></div>
+            <div className="absolute top-48 right-1/3 w-4 h-4 bg-purple-400/30 rounded floating-element" style={{animationDelay: '2s'}}></div>
+            <div className="absolute bottom-1/4 left-1/5 w-8 h-8 bg-emerald-400/20 rounded-xl floating-element" style={{animationDelay: '4s'}}></div>
+          </div>
           
           <div className="container mx-auto px-6 relative z-10">
-            <div className="max-w-5xl mx-auto text-center mb-16">
+            <div className="max-w-6xl mx-auto text-center mb-20">
               <FadeInSection delay={200}>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600">Restoran Yönetim Sistemi Fiyatlandırma</h1>
-                <p className="text-lg text-muted max-w-3xl mx-auto scroll-reveal">
-                  İşletmenizin büyüklüğüne ve ihtiyaçlarınıza göre özelleştirilmiş çözümler. 
-                  İhtiyaçlarınıza en uygun planı seçin.
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100/20 to-purple-100/20 border border-indigo-200/30 rounded-full mb-8">
+                  <span className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full"></span>
+                  <span className="text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Fiyatlandırma Planları</span>
+                </div>
+              </FadeInSection>
+              
+              <FadeInSection delay={300}>
+                <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-indigo-600 to-purple-600 animate-gradient">
+                    Projeleriniz İçin
+                  </span>
+                  <br />
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-emerald-600 to-cyan-600 animate-gradient">
+                    Esnek Fiyatlandırma
+                  </span>
+                </h1>
+              </FadeInSection>
+              
+              <FadeInSection delay={400}>
+                <p className="text-xl md:text-2xl text-muted max-w-4xl mx-auto mb-12 leading-relaxed">
+                  İşletmenizin büyüklüğüne ve ihtiyaçlarınıza göre <span className="text-foreground font-medium">özelleştirilmiş çözümler</span>. 
+                  <span className="text-foreground font-medium"> Şeffaf fiyatlandırma</span> ile size en uygun planı seçin.
                 </p>
               </FadeInSection>
 
-              {/* Fiyatlandırma Tipi Seçici */}
+              <FadeInSection delay={500}>
+                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-xl">
+                      ✓
+                    </div>
+                    <span className="text-muted">14 gün ücretsiz deneme</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white text-xl">
+                      🔒
+                    </div>
+                    <span className="text-muted">Güvenli ödeme</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-xl">
+                      📞
+                    </div>
+                    <span className="text-muted">24/7 destek</span>
+                  </div>
+                </div>
+              </FadeInSection>
+
+              {/* Enhanced Billing Type Selector */}
               <FadeInSection delay={300}>
                 <div className="flex items-center justify-center mt-10 mb-12">
                   <span className={`text-sm font-medium transition-colors duration-300 ${billingType === "monthly" ? "text-foreground" : "text-muted"}`}>Aylık</span>

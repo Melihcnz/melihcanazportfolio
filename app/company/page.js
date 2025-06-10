@@ -6,10 +6,16 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
 export default function Company() {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('');
   const resourcesRef = useRef(null);
   const staggeredElements = useRef(null);
   const parallaxBg = useRef(null);
@@ -61,177 +67,241 @@ export default function Company() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    // Simülasyon: Email abone işlemi
-    setMessage("Başarıyla abone oldunuz!");
-    setEmail("");
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const resources = [
-    {
-      title: "Blog Yazıları",
-      description: "Yazılım geliştirme, web teknolojileri ve blockchain konularında detaylı makaleler.",
-      items: [
-        {
-          title: "Modern Web Geliştirme Yaklaşımları",
-          date: "15 Mart 2024",
-          readTime: "10 dk",
-          link: "#"
-        },
-        {
-          title: "React ve Next.js ile SEO Optimizasyonu",
-          date: "10 Mart 2024",
-          readTime: "8 dk",
-          link: "#"
-        },
-        {
-          title: "TypeScript Best Practices",
-          date: "5 Mart 2024",
-          readTime: "12 dk",
-          link: "#"
-        }
-      ]
-    },
-    {
-      title: "Eğitim İçerikleri",
-      description: "Yazılım geliştirme süreçlerini öğrenmek için kapsamlı eğitim materyalleri.",
-      items: [
-        {
-          title: "Full Stack Development 101",
-          duration: "20 saat",
-          level: "Başlangıç",
-          link: "#"
-        },
-        {
-          title: "React ve Node.js ile Uygulama Geliştirme",
-          duration: "15 saat",
-          level: "Orta",
-          link: "#"
-        },
-        {
-          title: "API Tasarımı ve Güvenlik",
-          duration: "10 saat",
-          level: "İleri",
-          link: "#"
-        }
-      ]
-    },
-    {
-      title: "Açık Kaynak",
-      description: "GitHub'da paylaşılan açık kaynak projeler ve katkıda bulunma rehberleri.",
-      items: [
-        {
-          title: "React Component Library",
-          stars: "250+",
-          contributors: "15",
-          link: "#"
-        },
-        {
-          title: "Node.js Utility Functions",
-          stars: "180+",
-          contributors: "8",
-          link: "#"
-        },
-        {
-          title: "TypeScript Starter Template",
-          stars: "120+",
-          contributors: "5",
-          link: "#"
-        }
-      ]
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('');
+
+    // Basit form validation
+    if (!formData.name || !formData.email || !formData.message) {
+      setSubmitStatus('Lütfen tüm zorunlu alanları doldurun.');
+      setIsSubmitting(false);
+      return;
     }
-  ];
+
+    try {
+      // EmailJS entegrasyonu yerine basit simülasyon
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setSubmitStatus('✅ Mesajınız başarıyla gönderildi! En kısa sürede dönüş yapacağım.');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      setSubmitStatus('❌ Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Layout>
       <div className="min-h-screen bg-background transition-colors duration-300">
-        {/* Hero Section */}
-        <section className="pt-32 pb-20 relative">
+        {/* Enhanced Hero Section */}
+        <section className="pt-32 pb-20 relative overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div 
-              className="absolute w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl" 
+              className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-r from-indigo-600/15 to-purple-600/15 blur-3xl" 
               style={{ 
-                top: isMounted ? -100 - scrollPosition * 0.05 : -100, 
-                left: isMounted ? -150 - scrollPosition * 0.02 : -150
+                top: isMounted ? -150 - scrollPosition * 0.05 : -150, 
+                left: isMounted ? -250 - scrollPosition * 0.02 : -250,
+                transform: `rotate(${scrollPosition * 0.03}deg)`
+              }}
+            ></div>
+            <div 
+              className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-r from-emerald-600/10 to-cyan-600/10 blur-3xl" 
+              style={{ 
+                bottom: isMounted ? -100 - scrollPosition * 0.04 : -100, 
+                right: isMounted ? -200 - scrollPosition * 0.01 : -200
               }}
             ></div>
           </div>
-          <div className="container mx-auto px-6 relative z-10">
-            <div className="max-w-4xl">
-              <FadeInSection delay={200}>
-                <h1 className="text-7xl font-bold mb-8 animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground">Kaynaklar</h1>
-              </FadeInSection>
-              <FadeInSection delay={400}>
-                <p className="text-xl text-muted">
-                  Yazılım geliştirme yolculuğunuzda size yardımcı olacak blog yazıları, 
-                  eğitim içerikleri ve açık kaynak projeler.
-                </p>
-              </FadeInSection>
+
+          {/* Floating Knowledge Icons */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-32 left-1/4 w-8 h-8 bg-indigo-400/20 rounded-lg flex items-center justify-center floating-element">
+              📚
+            </div>
+            <div className="absolute top-48 right-1/3 w-6 h-6 bg-purple-400/30 rounded-full flex items-center justify-center floating-element" style={{animationDelay: '2s'}}>
+              💡
+            </div>
+            <div className="absolute bottom-1/3 left-1/5 w-10 h-10 bg-emerald-400/20 rounded-2xl flex items-center justify-center floating-element" style={{animationDelay: '4s'}}>
+              🚀
             </div>
           </div>
-        </section>
-
-        {/* Resources Grid */}
-        <section className="py-32">
-          <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 gap-32">
-              {resources.map((section, sectionIndex) => (
-                <FadeInSection delay={300 + (sectionIndex * 200)} key={section.title}>
-                  <div>
-                    <h2 className="text-4xl font-bold mb-4 relative inline-block">
-                      {section.title}
-                      <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-indigo-600 to-purple-600"></span>
-                    </h2>
-                    <p className="text-muted mb-12 max-w-2xl">{section.description}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-list">
-                      {section.items.map((item, itemIndex) => (
-                        <FadeInSection delay={500 + (itemIndex * 200)} key={item.title}>
-                          <div className="group card-3d p-8 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all duration-500 hover:scale-105">
-                            <div className="card-3d-inner">
-                              <h3 className="text-xl font-bold mb-4 text-reveal">
-                                <span>{item.title}</span>
-                              </h3>
-                              <div className="space-y-2 mb-6">
-                                {'date' in item && (
-                                  <>
-                                    <p className="text-sm text-muted">{item.date}</p>
-                                    <p className="text-sm text-muted">Okuma süresi: {item.readTime}</p>
-                                  </>
-                                )}
-                                {'duration' in item && (
-                                  <>
-                                    <p className="text-sm text-muted">Süre: {item.duration}</p>
-                                    <p className="text-sm text-muted">Seviye: {item.level}</p>
-                                  </>
-                                )}
-                                {'stars' in item && (
-                                  <>
-                                    <p className="text-sm text-muted">⭐ {item.stars}</p>
-                                    <p className="text-sm text-muted">👥 {item.contributors} katkıda bulunan</p>
-                                  </>
-                                )}
-                              </div>
-                              <Link 
-                                href={item.link}
-                                className="inline-flex items-center text-sm group-hover:text-foreground transition-colors group"
-                              >
-                                <span>Daha Fazla Bilgi</span>
-                                <span className="inline-block ml-2 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                              </Link>
-                            </div>
-                          </div>
-                        </FadeInSection>
-                      ))}
+          
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="max-w-6xl mx-auto">
+              <FadeInSection delay={200}>
+                <div className="text-center mb-16">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100/20 to-purple-100/20 border border-indigo-200/30 rounded-full mb-8">
+                    <span className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full"></span>
+                    <span className="text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Hakkımda</span>
+                  </div>
+                </div>
+              </FadeInSection>
+              
+              <FadeInSection delay={300}>
+                <div className="text-center mb-16">
+                  <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-8 leading-tight">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-indigo-600 to-purple-600 animate-gradient">
+                      Melih Canaz
+                    </span>
+                    <br />
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-emerald-600 to-cyan-600 animate-gradient">
+                      Full Stack Developer
+                    </span>
+                  </h1>
+                </div>
+              </FadeInSection>
+              
+              <FadeInSection delay={400}>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div className="space-y-6 px-4 lg:px-0">
+                    <p className="text-lg md:text-xl text-muted leading-relaxed">
+                      <span className="text-foreground font-medium">JavaScript ve TypeScript</span> dillerinde uzmanlaşmış, 
+                      modern web teknolojileri ile <span className="text-foreground font-medium">yenilikçi çözümler</span> üreten Full Stack geliştirici.
+                    </p>
+                    <p className="text-base md:text-lg text-muted">
+                      <span className="text-foreground font-medium">2+ yıllık deneyim</span> ile kullanıcı odaklı, ölçeklenebilir ve 
+                      performanslı web uygulamaları geliştiriyorum.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-3 md:gap-4 px-4 lg:px-0">
+                    <div className="text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-200/20">
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white text-lg md:text-xl mx-auto mb-3">
+                        👨‍💻
+                      </div>
+                      <div className="text-xl md:text-2xl font-bold mb-1">21</div>
+                      <div className="text-xs md:text-sm text-muted">Yaş</div>
+                    </div>
+                    
+                    <div className="text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-200/20">
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center text-white text-lg md:text-xl mx-auto mb-3">
+                        📅
+                      </div>
+                      <div className="text-xl md:text-2xl font-bold mb-1">2+</div>
+                      <div className="text-xs md:text-sm text-muted">Yıl Deneyim</div>
+                    </div>
+                    
+                    <div className="text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-pink-500/10 to-purple-500/10 border border-pink-200/20">
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl flex items-center justify-center text-white text-lg md:text-xl mx-auto mb-3">
+                        🚀
+                      </div>
+                      <div className="text-xl md:text-2xl font-bold mb-1">15+</div>
+                      <div className="text-xs md:text-sm text-muted">Proje</div>
                     </div>
                   </div>
-                </FadeInSection>
-              ))}
+                </div>
+              </FadeInSection>
             </div>
           </div>
         </section>
 
-        {/* Newsletter Section */}
+
+
+        {/* Skills & Technologies */}
+        <FadeInSection delay={800}>
+          <section className="py-32 relative">
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-20 px-4 lg:px-0">
+                  <FadeInSection delay={900}>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-100/10 border border-cyan-200/20 rounded-full mb-6">
+                      <span className="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                      <span className="text-sm font-medium text-cyan-600">Teknoloji Stack</span>
+                    </div>
+                  </FadeInSection>
+                  <FadeInSection delay={1000}>
+                    <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-6">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-cyan-600 to-blue-600">
+                        Uzmanlaştığım Teknolojiler
+                      </span>
+                    </h2>
+                  </FadeInSection>
+                  <FadeInSection delay={1100}>
+                    <p className="text-base md:text-lg lg:text-xl text-muted max-w-3xl mx-auto">
+                      Modern web geliştirme alanında kullandığım <span className="text-foreground font-medium">teknolojiler</span> ve 
+                      <span className="text-foreground font-medium"> araçlar</span>
+                    </p>
+                  </FadeInSection>
+                </div>
+
+                {/* Skills Progress Bars */}
+                <div className="space-y-12 px-4 lg:px-0">
+                  <FadeInSection delay={1200}>
+                    <div className="space-y-8">
+                      <h3 className="text-2xl font-bold mb-8 text-center lg:text-left">Frontend Teknolojileri</h3>
+                      <div className="space-y-6">
+                        {[
+                          { name: "React", percentage: 90, color: "bg-gradient-to-r from-blue-500 to-cyan-500", icon: "⚛️" },
+                          { name: "Next.js", percentage: 85, color: "bg-gradient-to-r from-gray-800 to-gray-600", icon: "▲" },
+                          { name: "TypeScript", percentage: 75, color: "bg-gradient-to-r from-blue-600 to-blue-400", icon: "📘" },
+                          { name: "Tailwind CSS", percentage: 95, color: "bg-gradient-to-r from-cyan-500 to-blue-500", icon: "💨" }
+                        ].map((skill, index) => (
+                          <div key={index} className="relative">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <span className="text-2xl">{skill.icon}</span>
+                                <h4 className="font-bold text-lg">{skill.name}</h4>
+                              </div>
+                              <span className="text-sm font-medium text-muted">{skill.percentage}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200/20 rounded-full h-3 overflow-hidden">
+                              <div 
+                                className={`h-full ${skill.color} rounded-full transition-all duration-1000 ease-out transform skill-progress`}
+                                style={{ width: `${skill.percentage}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FadeInSection>
+
+                  <FadeInSection delay={1400}>
+                    <div className="space-y-8">
+                      <h3 className="text-2xl font-bold mb-8 text-center lg:text-left">Backend Teknolojileri</h3>
+                      <div className="space-y-6">
+                        {[
+                          { name: "Node.js", percentage: 85, color: "bg-gradient-to-r from-green-600 to-green-400", icon: "🟢" },
+                          { name: "Express.js", percentage: 90, color: "bg-gradient-to-r from-gray-700 to-gray-500", icon: "🚀" },
+                          { name: "MongoDB", percentage: 80, color: "bg-gradient-to-r from-green-500 to-emerald-500", icon: "🍃" },
+                          { name: "PostgreSQL", percentage: 70, color: "bg-gradient-to-r from-blue-700 to-blue-500", icon: "🐘" }
+                        ].map((skill, index) => (
+                          <div key={index} className="relative">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <span className="text-2xl">{skill.icon}</span>
+                                <h4 className="font-bold text-lg">{skill.name}</h4>
+                              </div>
+                              <span className="text-sm font-medium text-muted">{skill.percentage}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200/20 rounded-full h-3 overflow-hidden">
+                              <div 
+                                className={`h-full ${skill.color} rounded-full transition-all duration-1000 ease-out transform skill-progress`}
+                                style={{ width: `${skill.percentage}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FadeInSection>
+                </div>
+              </div>
+            </div>
+          </section>
+        </FadeInSection>
+
+        {/* Contact Form Section */}
         <FadeInSection delay={600}>
           <section className="py-32 bg-foreground/5 relative">
             <div className="absolute inset-0 overflow-hidden">
@@ -243,28 +313,172 @@ export default function Company() {
                 }}
               ></div>
             </div>
-            <div className="container mx-auto px-6 relative z-10">
-              <div className="max-w-3xl mx-auto text-center space-y-8">
-                <h2 className="text-4xl font-bold animate-gradient bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground">Güncel Kalın</h2>
-                <p className="text-muted">
-                  Yeni blog yazıları, eğitim içerikleri ve proje güncellemelerinden haberdar olun.
-                </p>
-                <form onSubmit={handleSubscribe} className="flex gap-4 max-w-md mx-auto">
-                  <input 
-                    type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="E-posta adresiniz" 
-                    className="flex-1 px-6 py-4 bg-foreground/5 rounded-xl focus:outline-none focus:bg-foreground/10 transition-colors focus:scale-[1.01] transform"
-                  />
-                  <button 
-                    type="submit"
-                    className="px-8 py-4 bg-foreground text-background rounded-xl hover:bg-foreground/90 transition-colors hover:scale-105 transform duration-300 btn-shiny"
-                  >
-                    Abone Ol
-                  </button>
-                </form>
-                {message && <p className="text-sm text-green-500">{message}</p>}
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-16">
+                  <FadeInSection delay={700}>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100/20 to-cyan-100/20 border border-emerald-200/30 rounded-full mb-8">
+                      <span className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full"></span>
+                      <span className="text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-cyan-600">İletişim</span>
+                    </div>
+                  </FadeInSection>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-emerald-600 to-cyan-600">
+                      Birlikte Çalışalım
+                    </span>
+                  </h2>
+                  <p className="text-lg text-muted max-w-2xl mx-auto">
+                    Yeni projeler için müsaitim. Aşağıdaki formu doldurarak benimle iletişime geçebilirsiniz.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                  {/* Contact Form */}
+                  <FadeInSection delay={800}>
+                    <div className="space-y-6">
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label htmlFor="name" className="block text-sm font-medium mb-2">
+                              İsim Soyisim *
+                            </label>
+                            <input
+                              type="text"
+                              id="name"
+                              name="name"
+                              value={formData.name}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                              placeholder="Adınız ve soyadınız"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="email" className="block text-sm font-medium mb-2">
+                              E-posta *
+                            </label>
+                            <input
+                              type="email"
+                              id="email"
+                              name="email"
+                              value={formData.email}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                              placeholder="ornek@email.com"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                            Konu
+                          </label>
+                          <input
+                            type="text"
+                            id="subject"
+                            name="subject"
+                            value={formData.subject}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300"
+                            placeholder="Proje hakkında görüşme"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="message" className="block text-sm font-medium mb-2">
+                            Mesaj *
+                          </label>
+                          <textarea
+                            id="message"
+                            name="message"
+                            value={formData.message}
+                            onChange={handleInputChange}
+                            required
+                            rows={6}
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all duration-300 resize-none"
+                            placeholder="Projeniz hakkında detayları paylaşın..."
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-full px-8 py-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-xl font-medium hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 hover:scale-105 transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              Gönderiliyor...
+                            </>
+                          ) : (
+                            <>
+                              📤 Mesaj Gönder
+                            </>
+                          )}
+                        </button>
+                      </form>
+                      {submitStatus && (
+                        <div className={`p-4 rounded-xl text-center ${
+                          submitStatus.includes('✅') ? 'bg-green-100/10 text-green-400 border border-green-200/20' : 'bg-red-100/10 text-red-400 border border-red-200/20'
+                        }`}>
+                          {submitStatus}
+                        </div>
+                      )}
+                    </div>
+                  </FadeInSection>
+
+                  {/* Contact Info & Quick Actions */}
+                  <FadeInSection delay={1000}>
+                    <div className="space-y-8">
+                      <div className="p-8 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-2xl">
+                        <h3 className="text-xl font-bold mb-6">Direkt İletişim</h3>
+                        <div className="space-y-4">
+                          <a 
+                            href="mailto:mcanaz1234@gmail.com"
+                            className="flex items-center gap-4 p-4 bg-white/10 rounded-xl hover:bg-white/15 transition-all duration-300 hover:-translate-y-1"
+                          >
+                            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+                              📧
+                            </div>
+                            <div>
+                              <div className="font-medium">E-posta</div>
+                              <div className="text-sm text-muted">mcanaz1234@gmail.com</div>
+                            </div>
+                          </a>
+                          <a 
+                            href="/api/download-cv"
+                            download="Melih_Canaz_CV.txt"
+                            className="flex items-center gap-4 p-4 bg-white/10 rounded-xl hover:bg-white/15 transition-all duration-300 hover:-translate-y-1"
+                          >
+                            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                              📄
+                            </div>
+                            <div>
+                              <div className="font-medium">CV İndir</div>
+                              <div className="text-sm text-muted">Detaylı özgeçmiş</div>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                      
+                      <div className="p-8 bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-200/20 rounded-2xl">
+                        <h3 className="text-xl font-bold mb-4">Hızlı Bilgi</h3>
+                        <div className="space-y-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                            Yeni projeler için müsait
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                            24 saat içinde yanıt veriyorum
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            Ücretsiz danışmanlık
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </FadeInSection>
+                </div>
               </div>
             </div>
           </section>
